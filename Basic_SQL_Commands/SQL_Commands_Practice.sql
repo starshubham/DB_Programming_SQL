@@ -77,3 +77,13 @@ UPDATE employee_info set salary = 300000.00 where FirstName = 'Praveen'
 UPDATE employee_info set salary = 500000.00 where FirstName = 'Anjali'
 UPDATE employee_info set salary = 450000.00 where FirstName = 'Pawan'   --updating salary of employees
 select *  from employee_info      --Retrieving Records from Table
+
+UPDATE employee_info set FirstName = 'Radha', City = 'Varanasi', Gender= 'F' Where EmployeeID = 7
+UPDATE employee_info set FirstName = 'Krishna', Address='Cantt Station Varanasi', City = 'Varanasi', Gender= 'M' Where EmployeeID = 9
+
+
+----------------Delete Commmand---------------------
+
+Delete from employee_info where FirstName='Akash';    --- Delete a particular row
+Delete from employee_info where EmployeeID=10;        --- Delete a particular row
+select *  from employee_info                          --- Retrieving Records from Table
