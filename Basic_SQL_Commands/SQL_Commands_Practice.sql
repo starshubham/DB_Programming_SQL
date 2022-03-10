@@ -9,7 +9,7 @@ exec sp_databases;   --Show all existing databases in shorts
 -----------------------------------------------
 
 
----UC2 : Ability create a employee payroll table in the payroll service database
+---Ability create a employee info table in the DB_Programming database
 CREATE TABLE employee_info 
 (
    EmployeeID int identity primary key,
@@ -61,6 +61,7 @@ where startDate BETWEEN CAST('2021-01-01' as DATE) AND GETDATE();
 
 --Use Alter Table Command to add Field gender 
 Alter Table employee_info add Gender varchar(1);
+Alter Table employee_info add State varchar(255);
 select *  from employee_info      --Retrieving Records from Table
 
 SELECT TOP 10 * FROM [INFORMATION_SCHEMA].[COLUMNS] WHERE TABLE_NAME='employee_info'; --- show table information
@@ -81,9 +82,238 @@ select *  from employee_info      --Retrieving Records from Table
 UPDATE employee_info set FirstName = 'Radha', City = 'Varanasi', Gender= 'F' Where EmployeeID = 7
 UPDATE employee_info set FirstName = 'Krishna', Address='Cantt Station Varanasi', City = 'Varanasi', Gender= 'M' Where EmployeeID = 9
 
+UPDATE employee_info set State = 'UP' Where City = 'Varanasi'
+UPDATE employee_info set State = 'MP' Where City = 'Jaunpur'
+
 
 ----------------Delete Commmand---------------------
 
 Delete from employee_info where FirstName='Akash';    --- Delete a particular row
 Delete from employee_info where EmployeeID=10;        --- Delete a particular row
 select *  from employee_info                          --- Retrieving Records from Table
+
+---------------Order By, Group By and Having Clause--------------
+
+SELECT * FROM employee_info;
+SELECT * FROM employee_info WHERE City='Varanasi';
+SELECT * FROM employee_info WHERE City='Varanasi' Order By FirstName;
+SELECT City, COUNT (*) FROM employee_info WHERE State = 'UP' Group By City Order By City;
+SELECT City, COUNT (*) FROM employee_info WHERE State = 'MP' Group By City Order By City;
+SELECT City, COUNT (*) FROM employee_info WHERE State = 'MP' Group By City HAVING COUNT (*) > 4 Order By City;
+
+
+---------------Order By Clause in Details--------------
+
+--When you use the SELECT statement to query data from a table, the order of rows in the result set is not guaranteed. 
+--It means that SQL Server can return a result set with an unspecified order of rows.
+--The only way for you to guarantee that the rows in the result set are sorted is to use the ORDER BY clause
+
+--The ASC sorts the result from the lowest value to the highest value while the DESC sorts the result set from the highest value to the lowest one.
+--If you don’t explicitly specify ASC or DESC, SQL Server uses ASC as the default sort order. Also, SQL Server treats NULL as the lowest value.
+--When processing the SELECT statement that has an ORDER BY clause, the ORDER BY clause is the very last clause to be processed.
+
+--A) Sort a result set by one column in ascending order
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+    FirstName;
+
+--B) Sort a result set by one column in descending order
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+    FirstName DESC;
+
+--C) Sort a result set by multiple columns
+SELECT
+    FirstName,
+    LastName,
+	City
+FROM
+    employee_info
+ORDER BY
+	City,
+    FirstName;
+
+--D) Sort a result set by multiple columns and different orders
+SELECT
+    FirstName,
+    LastName,
+	City
+FROM
+    employee_info
+ORDER BY
+	City DESC,
+    FirstName ASC;
+
+--E) Sort a result set by a column that is not in the select list
+--It is possible to sort the result set by a column that does not appear on the select list. 
+--For example, the following statement sorts the employee by the state even though the state column does not appear on the select list.
+SELECT
+    FirstName,
+    LastName,
+	City
+FROM
+    employee_info
+ORDER BY
+	State;
+
+--F) Sort a result set by an expression
+--The LEN() function returns the number of characters of a string. 
+--The following statement uses the LEN() function in the ORDER BY clause to retrieve a employee list sorted by the length of the first name.
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+	LEN(FirstName) DESC;
+
+--G) Sort by ordinal positions of columns
+--SQL Server allows you to sort the result set based on the ordinal positions of columns that appear in the select list.
+--The following statement sorts the employees by first name and last name. But instead of specifying the column names explicitly, 
+--it uses the ordinal positions of the columns:
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+	1,
+	2;
+
+--In this example, 1 means the FirstName column and 2 means the LastName column.
+
+
+----------------------------------------------------------------------------------------
+
+INSERT INTO employee_info (FirstName,LastName,Address,City,PhoneNumber,Salary,StartDate,Gender,State) VALUES
+('Sonali', 'Baranwal', 'Raj Nagar', 'Ghaziabad', '9873070519', 600000.00, '2019-01-03','F','UP'),
+('Monika', 'Sharma', 'Vaishali', 'Ghaziabad', '7860650519', 700000.00, '2019-01-03','F','UP'),
+('Rohit', 'Sharma', 'Wahnkhede', 'Mumbai', '9598650519', 800000.00, '2020-01-03','M','Maharashtra'),
+('Subhash', 'Verma', 'Pune', 'Pune', '7898650519', 700000.00, '2020-01-03','M','Maharashtra')
+select * from employee_info;
+-------------------------SQL Server OFFSET FETCH----------------------
+
+--Summary: in this tutorial, you will learn how to use the SQL Server OFFSET FETCH clauses to limit the number of rows returned by a query.
+--The OFFSET and FETCH clauses are the options of the ORDER BY clause. They allow you to limit the number of rows to be returned by a query.
+
+--The following illustrates the syntax of the OFFSET and FETCH clauses:
+
+----ORDER BY column_list [ASC |DESC]
+----OFFSET offset_row_count {ROW | ROWS}
+----FETCH {FIRST | NEXT} fetch_row_count {ROW | ROWS} ONLY
+----Code language: SQL (Structured Query Language) (sql)
+----In this syntax:
+
+--The OFFSET clause specifies the number of rows to skip before starting to return rows from the query. 
+--The offset_row_count can be a constant, variable, or parameter that is greater or equal to zero.
+
+--The FETCH clause specifies the number of rows to return after the OFFSET clause has been processed. 
+--The offset_row_count can a constant, variable or scalar that is greater or equal to one.
+
+--The OFFSET clause is mandatory while the FETCH clause is optional. Also, the FIRST and NEXT are synonyms respectively 
+--so you can use them interchangeably.
+--Note that you must use the OFFSET and FETCH clauses with the ORDER BY clause. Otherwise, you will get an error.
+
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+	LastName,
+    FirstName;
+
+--To skip the first 5 Name and return the rest, you use the OFFSET clause as shown in the following statement:
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+	LastName,
+    FirstName
+OFFSET 5 ROWS;
+
+--To skip the first 4 employees and select the next 3 products, you use both OFFSET and FETCH clauses as follows:
+SELECT
+    FirstName,
+    LastName
+FROM
+    employee_info
+ORDER BY
+	LastName,
+    FirstName
+OFFSET 4 ROWS
+FETCH NEXT 3 ROWS ONLY;
+
+--To get the top 7 highest paid employees we can use both OFFSET and FETCH clauses:
+SELECT
+    FirstName,
+    LastName,
+	Salary
+FROM
+    employee_info
+ORDER BY
+	Salary DESC,
+	FirstName ASC
+OFFSET 0 ROWS
+FETCH NEXT 7 ROWS ONLY;
+
+select * from employee_info;
+
+
+-----------Introduction to SQL Server SELECT TOP
+--The SELECT TOP clause allows you to limit the number of rows or percentage of rows returned in a query result set.
+--Because the order of rows stored in a table is unspecified, the SELECT TOP statement is always used in conjunction with the ORDER BY clause. 
+--Therefore, the result set is limited to the first N number of ordered rows.
+
+----WITH TIES
+--The WITH TIES allows you to return more rows with values that match the last row in the limited result set. 
+--Note that WITH TIES may cause more rows to be returned than you specify in the expression.
+
+--For example, if you want to return the most expensive products, you can use the TOP 1. 
+--However, if two or more products have the same prices as the most expensive product, then you miss the other most expensive products in the result set.
+
+--To avoid this, you can use TOP 1 WITH TIES. It will include not only the first expensive product but also the second one, and so on.
+--1) Using TOP with a constant value
+SELECT TOP 5
+    FirstName,
+    LastName,
+	Salary
+FROM
+    employee_info
+ORDER BY
+	Salary DESC,
+	FirstName ASC
+select * from employee_info;
+
+--2) Using TOP to return a percentage of rows
+SELECT TOP 30 PERCENT
+    FirstName,
+    LastName,
+	Salary
+FROM
+    employee_info
+ORDER BY
+	Salary DESC,
+	FirstName ASC
+select * from employee_info;
+
+--3) Using TOP WITH TIES to include rows that match the values in the last row
+SELECT TOP 2 WITH TIES
+    FirstName,
+    LastName,
+	Salary
+FROM
+    employee_info
+ORDER BY
+	Salary DESC
+select * from employee_info;
