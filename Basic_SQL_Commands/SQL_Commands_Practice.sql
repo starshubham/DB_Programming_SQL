@@ -197,7 +197,8 @@ INSERT INTO employee_info (FirstName,LastName,Address,City,PhoneNumber,Salary,St
 ('Sonali', 'Baranwal', 'Raj Nagar', 'Ghaziabad', '9873070519', 600000.00, '2019-01-03','F','UP'),
 ('Monika', 'Sharma', 'Vaishali', 'Ghaziabad', '7860650519', 700000.00, '2019-01-03','F','UP'),
 ('Rohit', 'Sharma', 'Wahnkhede', 'Mumbai', '9598650519', 800000.00, '2020-01-03','M','Maharashtra'),
-('Subhash', 'Verma', 'Pune', 'Pune', '7898650519', 700000.00, '2020-01-03','M','Maharashtra')
+('Subhash', 'Verma', 'Pune', 'Pune', '7898650519', 700000.00, '2020-01-03','M','Maharashtra');
+
 select * from employee_info;
 -------------------------SQL Server OFFSET FETCH----------------------
 
@@ -317,3 +318,109 @@ FROM
 ORDER BY
 	Salary DESC
 select * from employee_info;
+
+
+---------------------------------------------------------------------------------------
+
+
+----------SQL Server SELECT DISTINCT clause------------------
+--Sometimes, you may want to get only distinct values in a specified column of a table. 
+--To do this, you use the SELECT DISTINCT clause as follows:
+
+--A) DISTINCT one column example
+SELECT DISTINCT
+    City
+FROM
+    employee_info
+ORDER BY
+    City;
+--The query returns a distinct value for each group of duplicates. 
+--In other words, it removed all duplicate cities from the result set.
+
+
+--B) DISTINCT multiple columns example
+--This statement returns distinct cities and states of all employees:
+SELECT DISTINCT
+    City,
+	State
+FROM
+    employee_info
+
+
+--C) DISTINCT with null values example
+INSERT INTO employee_info (FirstName,LastName,Address,City,Salary,StartDate,Gender,State) VALUES
+('Ankur', 'Yadav', 'Patna', 'Patna', 800000.00, '2020-01-03','M','Bihar'),
+('Chadrawali', 'Yadav', 'Patna', 'Patna', 700000.00, '2020-01-03','F','Bihar');
+
+--The following example finds the distinct phone numbers of the employees:
+SELECT DISTINCT
+    PhoneNumber
+FROM
+    employee_info
+ORDER BY
+    PhoneNumber;
+select * from employee_info;
+--In this example, the DISTINCT clause kept only one NULL in the phone column and removed the other NULLs.
+
+
+------DISTINCT vs. GROUP BY------
+--The following statement uses the GROUP BY clause to return distinct cities together 
+--with state and zip code from the employee_info table:
+SELECT 
+	City, 
+	State
+FROM 
+	employee_info
+GROUP BY 
+	City, State
+ORDER BY
+	City, State
+
+--It is equivalent to the following query that uses the DISTINCT operator :
+SELECT DISTINCT 
+	City, 
+	State
+FROM 
+	employee_info;
+
+--Both DISTINCT and GROUP BY clause reduces the number of returned rows in the result set by removing the duplicates.
+--However, you should use the GROUP BY clause when you want to apply an aggregate function on one or more columns.
+
+
+------------------------SQL Server WHERE clause------------------------
+
+
+--In the WHERE clause, you specify a search condition to filter rows returned by the FROM clause. 
+--The WHERE clause only returns the rows that cause the search condition to evaluate to TRUE.
+--The search condition is a logical expression or a combination of multiple logical expressions. 
+--In SQL, a logical expression is often called a predicate.
+
+--A) Finding rows by using a simple equality
+SELECT
+    FirstName,
+    LastName,
+    Salary,
+    Gender,
+    City
+	State
+FROM
+    employee_info
+WHERE
+    State='UP'
+ORDER BY
+    Salary;
+
+--B) Finding rows that meet two conditions
+SELECT
+    FirstName,
+    LastName,
+    Salary,
+    Gender,
+    City
+	State
+FROM
+    employee_info
+WHERE
+    State='UP' AND Gender='M'
+ORDER BY
+    Salary;
