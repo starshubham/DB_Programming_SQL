@@ -397,12 +397,7 @@ FROM
 
 --A) Finding rows by using a simple equality
 SELECT
-    FirstName,
-    LastName,
-    Salary,
-    Gender,
-    City
-	State
+    FirstName,LastName,Salary,Gender,City,State
 FROM
     employee_info
 WHERE
@@ -412,15 +407,459 @@ ORDER BY
 
 --B) Finding rows that meet two conditions
 SELECT
-    FirstName,
-    LastName,
-    Salary,
-    Gender,
-    City
-	State
+    FirstName,LastName,Salary,Gender,City,State
 FROM
     employee_info
 WHERE
     State='UP' AND Gender='M'
 ORDER BY
     Salary;
+
+--C) Finding rows by using a comparison operator
+SELECT
+    FirstName,LastName,Salary,Gender,City,State
+FROM
+    employee_info
+WHERE
+    State='UP' and Salary>400000
+ORDER BY
+    Salary DESC;
+
+--D) Finding rows that meet any of two conditions
+SELECT
+    FirstName,LastName,Salary,Gender,City,State
+FROM
+    employee_info
+WHERE
+    State='UP' or Salary>500000
+ORDER BY
+    Salary DESC;
+
+--E) Finding rows with the value between two values
+SELECT
+    FirstName,LastName,Salary,Gender,City,State
+FROM
+    employee_info
+WHERE
+    Salary BETWEEN 400000 and 600000
+ORDER BY
+    Salary DESC;
+
+--F) Finding rows that have a value in a list of values
+--The following example uses the IN operator to find employees whose Salary is 450000 or 600000 or 800000.
+SELECT
+    FirstName,LastName,Salary,Gender,City,State
+FROM
+    employee_info
+WHERE
+    Salary IN (450000, 600000, 800000)
+ORDER BY
+    Salary DESC;
+
+--G) Finding rows whose values contain a string
+SELECT
+    FirstName,LastName,Salary,Gender,City,State
+FROM
+    employee_info
+WHERE
+    FirstName LIKE '%Sh%'
+ORDER BY
+    Salary DESC;
+
+
+------------------SQL Server AND operator-----------------------
+
+--The AND is a logical operator that allows you to combine two Boolean expressions. 
+--It returns TRUE only when both expressions evaluate to TRUE.
+
+--A) Using AND operator example
+SELECT
+    *
+FROM
+    employee_info
+WHERE
+    State='UP' and Salary>400000
+ORDER BY
+    Salary DESC;
+
+--B) Using multiple AND operators example
+SELECT
+    *
+FROM
+    employee_info
+WHERE
+    State='UP' and Salary>400000 and Gender='F'
+ORDER BY
+    Salary DESC;
+
+--C) Using the AND operator with other logical operators
+SELECT
+    *
+FROM
+    employee_info
+WHERE
+    State='UP' or Salary>400000 and Gender='F'
+ORDER BY
+    Salary DESC;
+
+--In this example, we used both OR and AND operators in the condition. 
+--As always, SQL Server evaluated the AND operator first.
+
+SELECT
+    *
+FROM
+    employee_info
+WHERE
+	(LastName='Seth' or LastName='Verma')
+    and Salary>400000 
+ORDER BY
+    Salary DESC;
+
+
+---------------------------SQL Server OR operator----------------------
+
+--The SQL Server OR is a logical operator that allows you to combine two Boolean expressions. 
+--It returns TRUE when either of the conditions evaluates to TRUE.
+
+--Note:- When you use more than one logical operator in a statement, SQL Server evaluates the OR operators after the AND operator. 
+--However, you can use the parentheses to change the order of the evaluation.
+
+--A) Using OR operator example
+SELECT
+    FirstName,LastName,Salary
+FROM
+    employee_info
+WHERE
+	Salary<400000 or Salary>600000 
+ORDER BY
+    Salary DESC;
+
+--B) Using multiple OR operators example
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary<400000 or Salary>600000 or Gender='F'
+ORDER BY
+    Salary DESC;
+
+--You can replace multiple OR operators by the IN operator as shown in the following query:
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary IN (400000,500000,800000)
+ORDER BY
+    Salary DESC;
+
+--C) Using OR operator with AND operator example
+SELECT
+    FirstName,LastName,Salary,Gender,State
+FROM
+    employee_info
+WHERE
+    State='UP' or Salary>400000 and Gender='F'
+ORDER BY
+    Salary DESC;
+
+--We can use the parentheses as shown in the following query:
+SELECT
+    FirstName,LastName,Salary,Gender,State
+FROM
+    employee_info
+WHERE
+    (Salary<300000 or Salary>600000) and Gender='F'
+ORDER BY
+    Salary DESC;
+
+
+----------------SQL Server IN operator---------------------
+
+--The IN operator is a logical operator that allows you to test 
+--whether a specified value matches any value in a list.
+
+--The IN operator is equivalent to multiple OR operators, therefore, the following predicates are equivalent:
+
+------    column IN (v1, v2, v3) |
+------    column = v1 OR column = v2 OR column = v3
+
+--To negate the IN operator, you use the NOT IN operator as follows:
+------    column | expression NOT IN ( v1, v2, v3, ...)
+
+
+--A) Using SQL Server IN with a list of values example
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary IN (400000,500000,800000)
+ORDER BY
+    Salary DESC;
+
+--The query above is equivalent to the following query that uses the OR operator instead:
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary =400000 or Salary=500000 or Salary=800000
+ORDER BY
+    Salary DESC;
+
+--To find the employees whose salaries are not one of the salaries above, 
+--you use the NOT IN operator as shown in the following query:
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary NOT IN (400000,500000,800000)
+ORDER BY
+    Salary DESC;
+
+--B) Using SQL Server IN operator with a subquery example
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+    EmployeeID IN (
+        SELECT
+            EmployeeID
+        FROM
+            employee_info
+        WHERE
+            Salary>600000
+    )
+ORDER BY
+    FirstName;
+
+select * from employee_info;
+
+
+-------------------------SQL Server BETWEEN operator----------------------------
+
+--The BETWEEN operator is a logical operator that allows you to specify a range to test.
+
+--A) Using SQL Server BETWEEN with numbers example
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary BETWEEN 600000 and 800000
+ORDER BY
+    Salary DESC;
+
+SELECT
+    FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	Salary NOT BETWEEN 600000 and 800000
+ORDER BY
+    Salary DESC;
+
+--B) Using SQL Server BETWEEN with dates example
+SELECT
+    FirstName,LastName,Salary,Gender,StartDate
+FROM
+    employee_info
+WHERE
+	StartDate BETWEEN CAST('2021-01-01' as DATE) AND GETDATE()
+ORDER BY
+    Salary DESC;
+
+
+----------------------SQL Server LIKE operator-----------------------
+
+
+--The SQL Server LIKE is a logical operator that determines if a character string matches a specified pattern. 
+--A pattern may include regular characters and wildcard characters. The LIKE operator is used 
+--in the WHERE clause of the SELECT, UPDATE, and DELETE statements to filter rows based on pattern matching.
+
+------Pattern------
+--The pattern is a sequence of characters to search for in the column or expression. 
+--It can include the following valid wildcard characters:
+
+--The percent wildcard (%): any string of zero or more characters.
+--The underscore (_) wildcard: any single character.
+--The [list of characters] wildcard: any single character within the specified set.
+--The [character-character]: any single character within the specified range.
+--The [^]: any single character not within a list or a range.
+
+
+----The % (percent) wildcard examples
+--The following example finds the employees whose last name starts with the letter z:
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	LastName Like 's%'
+ORDER BY
+    FirstName DESC;
+
+--The following example returns the employees whose last name ends with the string h:
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	LastName Like '%a'
+ORDER BY
+    FirstName DESC;
+
+--The following statement retrieves the employees whose last name starts with the letter t and ends with the letter s:
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	LastName Like 'v%a'
+ORDER BY
+    FirstName DESC;
+
+----The _ (underscore) wildcard example
+--The underscore represents a single character. For example, 
+--the following statement returns the customers where the second character is the letter u:
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	LastName Like '_e%'
+ORDER BY
+    FirstName DESC;
+
+----The pattern _e%
+
+--The first underscore character ( _) matches any single character.
+--The second letter u matches the letter e exactly
+--The third character % matches any sequence of characters
+
+----The [list of characters] wildcard example
+
+--The square brackets with a list of characters e.g., [ABC] represents a single character 
+--that must be one of the characters specified in the list.
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	FirstName Like '[SR]%'
+ORDER BY
+    FirstName DESC;
+
+----The [character-character] wildcard example
+--The square brackets with a character range e.g., [A-C] represent a single character 
+--that must be within a specified range.
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	FirstName Like '[A-R]%'
+ORDER BY
+    FirstName DESC;
+
+
+----The [^Character List or Range] wildcard example
+--The square brackets with a caret sign (^) followed by a range e.g., [^A-C] or character list e.g., 
+--[ABC] represent a single character that is not in the specified range or character list.
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	FirstName Like '[^A-R]%'
+ORDER BY
+    FirstName DESC;
+
+----The NOT LIKE operator example
+--The following example uses the NOT LIKE operator to find customers 
+--where the first character in the first name is not the letter S:
+SELECT
+    EmployeeID,FirstName,LastName,Salary,Gender
+FROM
+    employee_info
+WHERE
+	FirstName NOT Like 'S%'
+ORDER BY
+    FirstName DESC;
+
+
+-----------------------------------------------------------------------------
+
+----Creating a new Schema
+create schema sales;
+
+--First, create a new table for the demonstration:
+CREATE TABLE sales.feedbacks (
+   feedback_id INT IDENTITY(1, 1) PRIMARY KEY, 
+    comment     VARCHAR(255) NOT NULL
+);
+
+--Second, insert some rows into the sales.feedbacks table:
+INSERT INTO sales.feedbacks(comment)
+VALUES('Can you give me 30% discount?'),
+      ('May I get me 30USD off?'),
+      ('Is this having 20% discount today?');
+
+SELECT * FROM sales.feedbacks;
+
+--If you want to search for 30% in the comment column, you may come up with a query like this:
+SELECT 
+   feedback_id,comment
+FROM 
+   sales.feedbacks
+WHERE 
+   comment LIKE '%30%';
+
+--The query returns the comments that contain 30% and 30USD, which is not what we expected.
+
+--To solve this issue, you need to use the ESCAPE clause:
+
+SELECT 
+   feedback_id, comment
+FROM 
+   sales.feedbacks
+WHERE 
+   comment LIKE '%30!%%' ESCAPE '!';
+
+--In this query, the  ESCAPE clause specified that the character ! is the escape character. 
+--It instructs the LIKE operator to treat the % character as a literal string instead of a wildcard. 
+--Note that without the ESCAPE clause, the query would return an empty result set.
+
+
+-----------------------------------------------------------------------
+
+------SQL Server column alias
+--To assign a column or an expression a temporary name during the query execution, you use a column alias.
+
+SELECT
+    FirstName + ' ' + LastName AS 'Full Name'
+FROM
+    employee_info
+ORDER BY
+    FirstName;
+
+--When you assign a column an alias, you can use either the column name or the column alias in the ORDER BY clause 
+--as shown in the following example:
+SELECT
+    FirstName, Salary 'Employee Salary'
+FROM
+    employee_info
+ORDER BY
+    FirstName;  
+
+------------------------------------------
+SELECT
+    FirstName, Salary 'Employee Salary'
+FROM
+    employee_info
+ORDER BY
+    'Employee Salary';  
