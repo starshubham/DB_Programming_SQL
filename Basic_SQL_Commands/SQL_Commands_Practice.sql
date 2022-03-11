@@ -837,7 +837,11 @@ WHERE
 
 -----------------------------------------------------------------------
 
-------SQL Server column alias
+----SQL Alias----
+--SQL Aliases can be used to create a temporary name for columns and tables.
+
+
+------SQL Server column alias-----
 --To assign a column or an expression a temporary name during the query execution, you use a column alias.
 
 SELECT
@@ -856,10 +860,79 @@ FROM
 ORDER BY
     FirstName;  
 
-------------------------------------------
+----------------------------------------------
 SELECT
     FirstName, Salary 'Employee Salary'
 FROM
     employee_info
 ORDER BY
-    'Employee Salary';  
+    'Employee Salary';
+	
+
+SELECT 
+	EmployeeID As Id, FirstName, LastName
+From
+	employee_info
+---------------------------SQL Server table alias--------------------------------
+
+----TABLE ALIASES: are used to shorten SQL query to make it easier to read or when there are more than one table is involved.
+
+--A table can be given an alias which is known as correlation name or range variable.
+--Similar to the column alias, table alias can be assigned either with or without the AS keyword:
+
+Create table Employees
+(
+	Emp_ID int identity primary key,
+	Name varchar(100) Not null,
+	Age int not null,
+	Address varchar(255) not null,
+	Salary money default 1000,
+	Dept_ID int
+)
+
+INSERT INTO Employees(Name,Age,Address,Salary,Dept_ID) Values
+('Shubham',25,'Delhi',600000,3);
+
+INSERT INTO Employees(Name,Age,Address,Salary) Values
+('Rahul',22,'Mumbai',600000);
+
+INSERT INTO Employees(Name,Age,Address,Salary,Dept_ID) Values
+('Kamal',23,'Lucknow',500000,3),
+('Kiran',24,'Varanasi',400000,1),
+('Chirag',28,'Jaunpur',300000,1);
+
+INSERT INTO Employees(Name,Age,Address,Salary) Values
+('Harsh',19,'Patna',300000),
+('Kajal',20,'Pune',600000);
+
+INSERT INTO Employees(Name,Age,Address,Salary,Dept_ID) Values
+('Mahi',26,'Pune',600000,2),
+('Pavan',25,'Jaunpur',600000,2)
+
+select * from Employees;
+
+Create table Dept(
+	Dept_ID int identity primary key,
+	D_Name varchar(100) not null
+)
+
+INSERT INTO Dept(D_Name) Values
+('Sales'),
+('HR'),
+('Finance'),
+('Marketing')
+select * from Dept;
+
+
+-----------Table Alias Example--------------------------
+SELECT 
+	E.Emp_ID, E.Name, D.Dept_ID, D.D_Name
+FROM 
+	Employees AS E, Dept AS D
+WHERE
+	E.Dept_ID=D.Dept_ID;
+
+--In this query, E is the alias for the Employees table and D is the alias for the Dept table.
+
+select * from Employees;
+select * from Dept;
