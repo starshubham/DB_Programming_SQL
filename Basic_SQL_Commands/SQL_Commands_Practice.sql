@@ -9,7 +9,7 @@ exec sp_databases;   --Show all existing databases in shorts
 -----------------------------------------------
 
 
----Ability create a employee info table in the DB_Programming database
+---Ability to create a employee info table in the DB_Programming database
 CREATE TABLE employee_info 
 (
    EmployeeID int identity primary key,
@@ -64,7 +64,7 @@ Alter Table employee_info add Gender varchar(1);
 Alter Table employee_info add State varchar(255);
 select *  from employee_info      --Retrieving Records from Table
 
-SELECT TOP 10 * FROM [INFORMATION_SCHEMA].[COLUMNS] WHERE TABLE_NAME='employee_info'; --- show table information
+SELECT TOP 5 * FROM [INFORMATION_SCHEMA].[COLUMNS] WHERE TABLE_NAME='employee_info'; --- show table information
 
 
 ------------Update Command----------------
