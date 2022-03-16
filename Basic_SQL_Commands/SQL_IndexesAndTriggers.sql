@@ -134,3 +134,141 @@ performance of your database.
 row into a new position to keep the rows in sorted order.
 
 */
+
+
+
+------------------------------------- TRIGGERS -------------------------------------
+
+/*
+								/* What is Trigger */
+* Trigger is an Even-driven T-SQL Programming block. It runs automatically when a particular event occurs.
+* SQL Server triggers are special stored procedures that are executed automatically in response to the database object, 
+  database, and server events. SQL Server provides three type of triggers:
+
+1) Data manipulation language (DML) triggers which are invoked automatically in response to INSERT, UPDATE, and DELETE events against tables.
+2) Data definition language (DDL) triggers which fire in response to CREATE, ALTER, and DROP statements. DDL triggers also 
+   fire in response to some system stored procedures that perform DDL-like operations.
+3) Logon triggers which fire in response to LOGON events
+
+INSERT, UPDATE, DELETE --> DML Command --> DML TRIGGER
+CREATE, ALTER,  DROP   --> DDL Command --> DDL TRIGGER
+
+				/* Introduction to SQL Server CREATE TRIGGER statement */
+The CREATE TRIGGER statement allows you to create a new trigger that is fired automatically whenever an event 
+such as INSERT, DELETE, or UPDATE occurs against a table.
+
+The following illustrates the syntax of the CREATE TRIGGER statement:
+
+CREATE TRIGGER [schema_name.]trigger_name
+ON table_name
+AFTER  {[INSERT],[UPDATE],[DELETE]}
+[NOT FOR REPLICATION]
+AS
+{sql_statements}
+
+The event is listed in the AFTER clause. The event could be INSERT, UPDATE, or DELETE. A single trigger can fire in response 
+to one or more actions against the table.
+The NOT FOR REPLICATION option instructs SQL Server not to fire the trigger when data modification is made as part of a 
+replication process.
+The sql_statements is one or more Transact-SQL used to carry out actions once an event occurs.
+
+						/* “Virtual” tables for triggers: INSERTED and DELETED */
+SQL Server provides two virtual tables that are available specifically for triggers called INSERTED and DELETED tables. 
+SQL Server uses these tables to capture the data of the modified row before and after the event occurs.
+
+The following table shows the content of the INSERTED and DELETED tables before and after each event:
+
+DML event	|	INSERTED table holds			|	DELETED table holds
+INSERT		|	rows to be inserted				|	empty
+UPDATE		|	new rows modified by the update	|	existing rows modified by the update
+DELETE		|	empty							|	rows to be deleted
+
+*/
+
+select * from Employees;
+
+/************ Audit Table ****************/
+CREATE TABLE Employees_Audit (
+Emp_ID INT,
+Inserted_By Varchar(100)
+)
+Go
+
+/************ Creating TRIGGER For INSERT EVENT ****************/
+CREATE TRIGGER TRG_Insert_Audit
+On Employees
+FOR INSERT
+AS
+BEGIN
+	Declare @emp_ID int
+
+	Select @emp_ID = Emp_ID from inserted
+	insert into Employees_Audit(Emp_ID, Inserted_By)
+	Values (@emp_ID, ORIGINAL_LOGIN())
+
+	PRINT 'Insert Trigger Executed Successfully'
+END
+GO
+
+--------------- Insert a new data in Employees Table ------------------------
+INSERT INTO Employees(Name,Age,Address,Salary,Dept_ID) Values
+	('Mohsin',24,'Jammu',400000,3)
+
+Select * from Employees;
+Select * from Employees_Audit;
+
+
+CREATE TRIGGER TRG_Delete_Rule
+ON Employees
+FOR DELETE
+AS
+BEGIN
+	RollBack
+	PRINT '*****************************************************'
+	PRINT 'You can not delete records from this table'
+	PRINT '*****************************************************'
+END
+GO
+
+Delete from Employees Where Emp_ID = 10;
+
+SELECT * From Employees;
+
+
+/************ DDL TRIGGER ****************/
+CREATE TRIGGER Trg_SampleDB
+ON DATABASE
+FOR CREATE_TABLE
+AS
+BEGIN
+	ROLLBACK
+	PRINT 'You are not allowed to create tables'
+END
+
+Create Table Tbl1 (ID INT)
+
+/************ List All Triggers ****************/
+Select * from sys.triggers
+
+
+/************ Find the discription of Triggers ****************/
+Select * from sys.sql_modules
+WHERE OBJECT_ID = object_id('TRG_Delete_Rule')
+Go
+
+
+/************ DISABLE / ENABLE Trigger ****************/
+
+DISABLE TRIGGER TRG_Delete_Rule On Employees
+GO
+
+ENABLE TRIGGER TRG_Delete_Rule On Employees
+GO
+
+
+/************ REMOVE TRIGGER ****************/
+DROP TRIGGER TRG_Delete_Rule
+GO
+
+DROP TRIGGER TRG_Insert_Rule
+GO
