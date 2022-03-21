@@ -230,7 +230,7 @@ END CATCH
 
 /* 
 	User Defined Errors
-	The THROW statement in SQL Server raises an exception and transgers the control to a CATCH block.
+	The THROW statement in SQL Server raises an exception and transfers the control to a CATCH block.
 	Syntax:
 	THROW @errorNumber,@errorMessage, @errorSeverity
 
